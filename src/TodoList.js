@@ -1,8 +1,8 @@
 import React,{ Component } from 'react';
 import 'antd/dist/antd.css';
-import {Input, Button, List} from 'antd';
-import {getChangeInputValueAction, getAddListItemAction, getDeleteListItemAction} from './store/actionCreator'
+import {getChangeInputValueAction, getAddListItemAction, getDeleteListItemAction, getTodoListAction} from './store/actionCreator'
 import store from './store/index';
+import TodoListUI from './TodoListUI';
 
 class TodoList extends Component {
     constructor(props){
@@ -11,27 +11,24 @@ class TodoList extends Component {
         this.changeInputValue = this.changeInputValue.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleDeleteItem = this.handleDeleteItem.bind(this);
         store.subscribe(this.handleChange)
+    }
+
+    componentDidMount() {
+        const action = getTodoListAction();
+        store.dispatch(action);
     }
 
     render() {
         return (
-            <div style={{ marginTop:'5px', marginLeft:'5px'}}>
-                <Input
-                value={this.state.inputValue}
-                placeholder="input placeholder"
-                style={{width:'300px',marginRight:'5px'}}
-                onChange={this.changeInputValue} />
-                <Button type="primary" onClick={this.handleClick}>提交</Button>
-                <List
-                style={{marginTop : '15px',width:'300px'}}
-                header={<div>Header</div>}
-                footer={<div>Footer</div>}
-                bordered
-                dataSource={this.state.list}
-                renderItem={(item,index) => (<List.Item onClick={this.handleDeleteItem.bind(this, index)}>{item}</List.Item>)}
-                />
-            </div>
+            <TodoListUI
+                inputValue = {this.state.inputValue}
+                list = {this.state.list}
+                changeInputValue = {this.changeInputValue}
+                handleClick = {this.handleClick}
+                handleDeleteItem = {this.handleDeleteItem}
+            />
         )
     }
     changeInputValue(e){
